@@ -1,0 +1,193 @@
+version: "3.9"
+
+services:
+  kong:
+    image: kong:3.7
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: ingress
+      - target: 8001
+        published: 8004
+        protocol: tcp
+        mode: ingress
+    configs:
+      - source: kong-config
+        target: /kong/declarative/kong.yml
+    networks:
+      - frontend-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: shopping_db
+      POSTGRES_USER: shopping_user
+      POSTGRES_PASSWORD: shopping_password
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    configs:
+      - source: schema-sql
+        target: /docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - db-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - target: 80
+        published: 5050
+        protocol: tcp
+        mode: ingress
+    networks:
+      - db-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  io-service:
+    image: trel0w/shopping-io-service:latest
+    environment:
+      SERVICE_NAME: shopping-io-service
+      PORT: "8000"
+      DATABASE_URL: postgresql://shopping_user:shopping_password@postgres:5432/shopping_db
+    networks:
+      - backend-net
+      - db-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  auth-service:
+    image: trel0w/shopping-auth-service:latest
+    environment:
+      SERVICE_NAME: shopping-auth-service
+      PORT: "8000"
+      IO_SERVICE_URL: http://io-service:8000
+      JWT_SECRET: trelow23214343982jtunfusn8d3onrfourd8o4832r3rofn8so8f3
+      JWT_EXPIRE_MINUTES: "60"
+    networks:
+      - frontend-net
+      - backend-net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  list-manager-service:
+    image: trel0w/shopping-list-manager-service:latest
+    environment:
+      SERVICE_NAME: shopping-list-manager-service
+      PORT: "8000"
+      AUTH_SERVICE_URL: http://auth-service:8000
+      IO_SERVICE_URL: http://io-service:8000
+      ITEMS_SERVICE_URL: http://items-service:8000
+      BUDGET_SERVICE_URL: http://budget-service:8000
+      NOTIFICATION_SERVICE_URL: http://notification-service:8000
+    networks:
+      - frontend-net
+      - backend-net
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  items-service:
+    image: trel0w/shopping-items-service:latest
+    environment:
+      SERVICE_NAME: shopping-items-service
+      PORT: "8000"
+      IO_SERVICE_URL: http://io-service:8000
+      BUDGET_SERVICE_URL: http://budget-service:8000
+      NOTIFICATION_SERVICE_URL: http://notification-service:8000
+    networks:
+      - backend-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  budget-service:
+    image: trel0w/shopping-budget-service:latest
+    environment:
+      SERVICE_NAME: shopping-budget-service
+      PORT: "8000"
+      IO_SERVICE_URL: http://io-service:8000
+      NOTIFICATION_SERVICE_URL: http://notification-service:8000
+    networks:
+      - backend-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  notification-service:
+    image: trel0w/shopping-notification-service:latest
+    environment:
+      SERVICE_NAME: shopping-notification-service
+      PORT: "8000"
+      IO_SERVICE_URL: http://io-service:8000
+    networks:
+      - backend-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  postgres_data:
+
+configs:
+  kong-config:
+    file: ./kong/kong.yml
+  schema-sql:
+    file: ./db/schema.sql
+
+networks:
+  frontend-net:
+    driver: overlay
+    attachable: true
+  backend-net:
+    driver: overlay
+    attachable: true
+  db-net:
+    driver: overlay
+    attachable: true

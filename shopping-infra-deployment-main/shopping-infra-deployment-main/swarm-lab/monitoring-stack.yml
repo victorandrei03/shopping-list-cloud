@@ -1,0 +1,28 @@
+version: '3.8'
+
+networks:
+  monitoring-net:
+    driver: overlay
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - /etc/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring-net
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring-net
+    deploy:
+      placement:
+        constraints: [node.role == manager]

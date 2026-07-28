@@ -1,0 +1,77 @@
+    <section id="auth-view" class="auth-view">
+        <aside class="auth-brand-panel">
+            <div class="brand">
+                <p class="brand-name">ShoppingWise</p>
+                <p class="brand-caption">Manage your shopping</p>
+            </div>
+
+            <div class="brand-copy">
+                <p class="brand-kicker">Platformă colaborativă pentru liste inteligente</p>
+                <h2 class="brand-title">Cumpărături organizate, clare și partajate.</h2>
+                <p class="brand-description">
+                    Gestionează listele, urmărește bugetul și colaborează cu familia sau colegii într-o singură aplicație modernă.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <strong>Partajare</strong>
+                    <span>Invită utilizatori cu roluri specifice și lucrează pe aceeași listă fără haos.</span>
+                </article>
+                <article class="feature-card">
+                    <strong>Buget</strong>
+                    <span>Monitorizează instant progresul cheltuielilor și pragurile de depășire.</span>
+                </article>
+            </div>
+        </aside>
+
+        <main class="auth-form-panel">
+            <div class="auth-card">
+                <div class="auth-card-header">
+                    <h1 id="auth-title">Bun venit înapoi</h1>
+                    <p id="auth-subtitle">Introdu datele tale pentru a accesa listele și fluxurile de colaborare.</p>
+                </div>
+
+                <div class="auth-switch">
+                    <button id="login-tab" type="button" class="active" onclick="setAuthMode('login')">Autentificare</button>
+                    <button id="register-tab" type="button" onclick="setAuthMode('register')">Înregistrare</button>
+                </div>
+
+                <form id="login-form" class="auth-fields" onsubmit="submitLogin(event)">
+                    <div class="field">
+                        <label for="login-user1-email">Adresă e-mail</label>
+                        <input id="login-user1-email" type="email" value="user1@example.com" placeholder="nume@example.com">
+                    </div>
+                    <div class="field">
+                        <label for="login-user1-password">Parolă</label>
+                        <div class="password-field">
+                            <input id="login-user1-password" type="password" value="password123" placeholder="Introdu parola">
+                            <button type="button" class="toggle-password" onclick="togglePassword('login-user1-password', this)">Arată</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="primary-button">Autentificare</button>
+                </form>
+
+                <form id="register-form" class="auth-fields hidden" onsubmit="submitRegister(event)">
+                    <div class="field">
+                        <label for="user1-email">Adresă e-mail</label>
+                        <input id="user1-email" type="email" value="user1@example.com" placeholder="nume@example.com">
+                    </div>
+                    <div class="field">
+                        <label for="user1-password">Parolă</label>
+                        <div class="password-field">
+                            <input id="user1-password" type="password" value="password123" placeholder="Alege o parolă">
+                            <button type="button" class="toggle-password" onclick="togglePassword('user1-password', this)">Arată</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="primary-button">Creează contul</button>
+                    <div id="register-response" class="response hidden"></div>
+                </form>
+
+                <div class="auth-meta">
+                    <span id="auth-meta-copy">Nu ai cont? Treci pe înregistrare și creează unul în câteva secunde.</span>
+                    <button id="auth-meta-button" type="button" class="link-button" onclick="setAuthMode('register')">Înregistrează-te</button>
+                </div>
+            </div>
+        </main>
+    </section>

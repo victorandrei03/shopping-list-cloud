@@ -1,0 +1,146 @@
+version: "3.9"
+
+services:
+  kong:
+    image: kong:3.7
+    container_name: shopping-kong
+    restart: unless-stopped
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    ports:
+      - "8000:8000"
+      - "8004:8001"
+    volumes:
+      - ./kong/kong.yml:/kong/declarative/kong.yml:ro
+    depends_on:
+      - auth-service
+      - list-manager-service
+    networks:
+      - frontend-net
+
+  postgres:
+    image: postgres:16
+    container_name: shopping-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: shopping_db
+      POSTGRES_USER: shopping_user
+      POSTGRES_PASSWORD: shopping_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    networks:
+      - db-net
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: shopping-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - db-net
+
+  io-service:
+    build:
+      context: ../shopping-io-service
+    container_name: shopping-io-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-io-service/.env.example
+    depends_on:
+      - postgres
+    networks:
+      - backend-net
+      - db-net
+
+  auth-service:
+    build:
+      context: ../shopping-auth-service
+    container_name: shopping-auth-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-auth-service/.env.example
+    depends_on:
+      - io-service
+    networks:
+      - frontend-net
+      - backend-net
+
+  list-manager-service:
+    build:
+      context: ../shopping-list-manager-service
+    container_name: shopping-list-manager-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-list-manager-service/.env.example
+    depends_on:
+      - auth-service
+      - budget-service
+      - io-service
+      - items-service
+    networks:
+      - frontend-net
+      - backend-net
+
+  items-service:
+    build:
+      context: ../shopping-items-service
+    container_name: shopping-items-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-items-service/.env.example
+    depends_on:
+      - budget-service
+      - io-service
+    networks:
+      - backend-net
+
+  budget-service:
+    build:
+      context: ../shopping-budget-service
+    container_name: shopping-budget-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-budget-service/.env.example
+    depends_on:
+      - io-service
+      - notification-service
+    networks:
+      - backend-net
+
+  notification-service:
+    build:
+      context: ../shopping-notification-service
+    container_name: shopping-notification-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-notification-service/.env.example
+    depends_on:
+      - io-service
+    networks:
+      - backend-net
+
+volumes:
+  postgres_data:
+
+networks:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+  db-net:
+    driver: bridge

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}ShoppingWise{% endblock %}
+
+{% block body %}
+    {% include "partials/auth_view.html" %}
+
+    <section id="workspace" class="workspace">
+        {% include "partials/sidebar.html" %}
+
+        <main class="main">
+            {% include "partials/dashboard_section.html" %}
+            {% include "partials/my_lists_section.html" %}
+            {% include "partials/notifications_section.html" %}
+        </main>
+
+        <div id="create-list-drawer" class="create-list-drawer hidden" aria-hidden="true">
+            <button
+                type="button"
+                class="create-list-drawer-backdrop"
+                onclick="closeCreateListDrawer()"
+                aria-label="Închide meniul pentru creare listă"
+            ></button>
+            <aside class="create-list-drawer-panel" aria-labelledby="create-list-drawer-title">
+                <div class="create-list-drawer-header">
+                    <div>
+                        <span class="drawer-eyebrow">List setup</span>
+                        <h3 id="create-list-drawer-title">Create New List</h3>
+                        <p>Configurează rapid lista, apoi continuă direct în <strong>My Lists</strong>.</p>
+                    </div>
+                    <button type="button" class="drawer-close-button" onclick="closeCreateListDrawer()" aria-label="Închide">
+                        ×
+                    </button>
+                </div>
+
+                <form class="create-list-drawer-form" onsubmit="submitCreateListDrawer(event)">
+                    <label class="drawer-field">
+                        <span>Nume listă</span>
+                        <input
+                            id="drawer-list-name"
+                            class="inline-input"
+                            type="text"
+                            placeholder="Ex: Cumpărături pentru săptămână"
+                        >
+                    </label>
+
+                    <label class="drawer-field">
+                        <span>Buget maxim</span>
+                        <input
+                            id="drawer-list-budget"
+                            class="inline-input"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value="500"
+                            placeholder="Ex: 500"
+                        >
+                    </label>
+
+                    <div id="create-list-drawer-response" class="response hidden compact"></div>
+
+                    <div class="create-list-drawer-actions">
+                        <button type="submit" class="action-button">Creează</button>
+                        <button type="button" class="subtle-button" onclick="closeCreateListDrawer()">Cancel</button>
+                    </div>
+                </form>
+            </aside>
+        </div>
+    </section>
+
+    <!-- Modal pentru gestionarea utilizatorilor -->
+    <div id="members-modal" class="members-modal hidden">
+        <div class="members-modal-overlay"></div>
+        <div class="members-modal-content">
+            <div class="members-modal-header">
+                <h3>Gestionează utilizatorii</h3>
+                <button type="button" class="modal-close" onclick="closeMembersModal()">×</button>
+            </div>
+            <div class="members-modal-body">
+                <div id="members-modal-loading" class="hidden">
+                    <p style="text-align: center; padding: 20px;">Se încarcă...</p>
+                </div>
+                <div id="members-modal-list" style="margin-bottom: 20px;"></div>
+                <div id="members-modal-add-form" class="hidden" style="padding: 15px; border-top: 1px solid #ddd;">
+                    <h4 style="margin-top: 0;">Adaugă utilizator</h4>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input id="modal-share-email" type="email" placeholder="Email utilizator" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <select id="modal-share-role" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="viewer">Vizualizator</option>
+                            <option value="editor" selected>Editor</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="action-button" onclick="submitAddMemberModal()" style="flex: 1;">Adaugă</button>
+                        <button type="button" class="subtle-button" onclick="toggleAddMemberFormModal()" style="flex: 1;">Anulează</button>
+                    </div>
+                </div>
+            </div>
+            <div class="members-modal-footer">
+                <button type="button" class="subtle-button" onclick="toggleAddMemberFormModal()" id="members-modal-add-btn">Adaugă utilizator</button>
+                <button type="button" class="action-button" onclick="closeMembersModal()">Închide</button>
+            </div>
+        </div>
+    </div>
+
+    {% include "partials/utility_hidden.html" %}
+{% endblock %}

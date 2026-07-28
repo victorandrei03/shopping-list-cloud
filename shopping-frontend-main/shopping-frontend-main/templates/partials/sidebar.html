@@ -1,0 +1,32 @@
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div>
+                    <h1 class="sidebar-title">ShoppingWise</h1>
+                    <p class="sidebar-subtitle">Manage your shopping</p>
+                </div>
+
+                <div class="user-card">
+                    <strong>Utilizator autentificat</strong>
+                    <p id="current-user-display">Niciun utilizator activ</p>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <button id="nav-dashboard" type="button" class="active" onclick="setWorkspaceSection('dashboard')">Dashboard</button>
+                    <button id="nav-my-lists" type="button" onclick="openMyLists()">My Lists</button>
+                    <button id="nav-notifications" type="button" onclick="openNotifications()">Notifications</button>
+                </nav>
+
+                <div id="global-status" class="status-chip">Status: Gata pentru testare</div>
+            </div>
+            <div class="sidebar-bottom">
+                <button type="button" class="create-list-cta" onclick="focusCreateListForm()">＋ Create New List</button>
+        <div class="profile-mini">
+            <div id="profile-avatar" class="profile-avatar">BW</div>
+            <div>
+                <strong id="profile-display-name">Guest User</strong>
+                <span id="profile-display-email">not-logged-in@example.com</span>
+                    </div>
+                    <button type="button" onclick="logoutUser()">Logout</button>
+                </div>
+            </div>
+        </aside>

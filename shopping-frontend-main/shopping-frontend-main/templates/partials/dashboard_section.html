@@ -1,0 +1,50 @@
+            <section id="dashboard-section" class="workspace-section active">
+                <div class="main-hero">
+                    <div>
+                        <h2 id="dashboard-greeting">Bun venit înapoi</h2>
+                        <p>Ai o vedere rapidă asupra listelor tale, a bugetelor și a activității recente.</p>
+                    </div>
+                    <div class="hero-toolbar">
+                        <div class="search-shell">
+                            <span>⌕</span>
+                            <input id="dashboard-search" type="text" placeholder="Caută liste..." oninput="renderDashboard(currentLists, currentNotifications)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-layout">
+                    <div class="dashboard-left">
+                        <section class="full-panel">
+                            <div class="dashboard-section-header">
+                                <h3>Listele mele</h3>
+                                <button type="button" class="view-all-button" onclick="openMyLists()">Vezi tot <span>→</span></button>
+                            </div>
+                            <div id="owned-lists-cards" class="dashboard-card-grid">
+                                <div class="empty-state">Autentifică-te și apasă „Reîncarcă dashboard” pentru a vedea listele create de tine.</div>
+                            </div>
+                        </section>
+
+                        <section class="full-panel">
+                            <div class="dashboard-section-header">
+                                <h3>Partajate cu mine</h3>
+                            </div>
+                            <div id="shared-lists-cards" class="shared-card-grid">
+                                <div class="empty-state">Aici apar listele în care ai fost invitat să colaborezi.</div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="dashboard-right">
+                        <section class="notification-shell">
+                            <div class="notification-shell-header">
+                                <h3>Notificări recente</h3>
+                                <span>◔</span>
+                            </div>
+                            <div id="recent-activity" class="notification-list">
+                                <div class="empty-state">Nu sunt notificări încă.</div>
+                            </div>
+                            <button type="button" class="mark-all-button" onclick="markAllNotificationsRead()">MARCHEAZĂ TOATE CA CITITE</button>
+                        </section>
+                    </div>
+                </div>
+            </section>

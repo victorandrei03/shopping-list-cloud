@@ -1,0 +1,75 @@
+        .panel,
+        .full-panel {
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid rgba(11, 123, 86, 0.1);
+            border-radius: 28px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .full-panel {
+            margin-bottom: 18px;
+        }
+
+        .panel h3,
+        .full-panel h3 {
+            margin: 0 0 16px;
+            font-size: 28px;
+            letter-spacing: -0.03em;
+        }
+
+        .action-row,
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .inline-input {
+            flex: 1 1 220px;
+        }
+
+        .action-button {
+            border: none;
+            border-radius: 16px;
+            padding: 14px 18px;
+            background: var(--secondary);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            background: #1f52c7;
+        }
+
+        .subtle-button {
+            border: 1px solid rgba(37, 99, 235, 0.18);
+            border-radius: 16px;
+            padding: 14px 18px;
+            background: var(--secondary-soft);
+            color: #143f9f;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .danger-button {
+            border: none;
+            border-radius: 16px;
+            padding: 14px 18px;
+            background: var(--danger);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .response.compact {
+            margin-top: 12px;
+        }
+
+        .utility-hidden {
+            display: none;
+        }
+

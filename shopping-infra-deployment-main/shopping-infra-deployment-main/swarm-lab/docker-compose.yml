@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  swarm-manager:
+    image: docker:28-dind
+    container_name: swarm-manager
+    privileged: true
+    restart: unless-stopped
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    command:
+      - --host=tcp://0.0.0.0:2375
+      - --host=unix:///var/run/docker.sock
+    ports:
+      - "23751:2375"
+      - "9443:9443"
+      - "3000:3000"
+      - "9090:9090"
+      - "5050:5050"
+      - "8000:8000"
+    volumes:
+      - swarm-manager-data:/var/lib/docker
+    networks:
+      - swarm-net
+
+  swarm-worker-1:
+    image: docker:28-dind
+    container_name: swarm-worker-1
+    privileged: true
+    restart: unless-stopped
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    command:
+      - --host=tcp://0.0.0.0:2375
+      - --host=unix:///var/run/docker.sock
+    ports:
+      - "23752:2375"
+    volumes:
+      - swarm-worker-1-data:/var/lib/docker
+    networks:
+      - swarm-net
+
+  swarm-worker-2:
+    image: docker:28-dind
+    container_name: swarm-worker-2
+    privileged: true
+    restart: unless-stopped
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    command:
+      - --host=tcp://0.0.0.0:2375
+      - --host=unix:///var/run/docker.sock
+    ports:
+      - "23753:2375"
+    volumes:
+      - swarm-worker-2-data:/var/lib/docker
+    networks:
+      - swarm-net
+
+volumes:
+  swarm-manager-data:
+  swarm-worker-1-data:
+  swarm-worker-2-data:
+
+networks:
+  swarm-net:
+    driver: bridge
